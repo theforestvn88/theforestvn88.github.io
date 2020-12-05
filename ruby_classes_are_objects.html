@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>Theforestvn88Blog</title>    
+
+    <link rel="stylesheet" media="all" href="./pack/forest.css" data-turbolinks-track="reload">
+    <script src="./pack/forest.js" data-turbolinks-track="reload"></script>
+  </head>
+
+  <body>
+    <h3><b>Ruby's Classes are Objects</b></h3>
+<hr class="fence">
+<i>@rừng #the Forest</i>
+<hr class="fence">
+<i>#November 25, 2020</i>
+<hr class="fence">
+<i>#ruby</i>
+<hr class="fence">
+<br>
+<div class="trunk">
+    <p>Ruby is considered a pure OOP language, and like other languages, classes in Ruby also play the same role in OOP: <b>blueprints for creating objects</b>. However, in some languages, classes are only a compile-time feature (new classes cannot be declared at run-time), in Ruby, under design concept: <b>"everything is an object in Ruby"</b> , Ruby's classes are objects, they are first-class citizens.</p>
+
+<p>Let's explore how Ruby's classes work internally.</p>
+
+</div>
+<br>
+<div class="evergreen">
+    <p class="branch">There is the class `Class`</p>
+<p>In object-oriented programming, an object is an instance of a class, in Ruby, all classes are instance of the class name `Class` which actually <code>is_a Object</code>. 
+
+<code class="block">
+Class.is_a? Object # true
+
+class Foo
+end
+
+Foo.instance_of? Class #true
+</code>
+
+</p><p>As you can see, Foo is an instance of `Class`, an object, and that maybe make you confuse. Just keep in mind that in some languages, classes are pure `abstracts`, in others (like Ruby), classes are pure `objects`.</p>
+<p>That why we can say: "everything (almost) is an object in Ruby" (a few things are not objects like blocks, methods and conditional statements).</p>
+
+<p class="branch">Blueprint for creating objects</p>
+
+<p>When a new class is defined (typically using <code>class Name ... end</code>), an object of type `Class` is created, and that object is a prototype for spawning child objects.</p>
+
+<p>All the built-in classes, along with the classes you define, have a corresponding global constant with the same name as the class called <b>class name</b> (which only `Class` objects have, normal objects don't have). 
+</p><p>That why when you declare a class with lower-case name, you will get error <code>class/module name must be CONSTANT</code> (in Ruby you cannot define a constant with lower-case name), and that why when you define a class with the name already exists, Ruby will re-open the existing class. </p>
+<p>Those class names are just constants means that you can treat classes just like any other Ruby objects: use them as arguments in methods, use them in expressions, and use them as references to the real `Class` objects.</p>
+
+<code class="block">
+def name_of(a_class)
+   a_class.name
+end
+
+name_of Foo # Foo
+foo = Foo.new
+name_of foo # NoMethodError
+
+class test # =&gt; error: class/module name must be CONSTANT
+end
+
+</code>
+
+<p> It's easier to work with a `Class` object through its class name, for example instead of working directly with a `Class` object <code>Class:0x1c9f04</code>, we work with its class name <code>Foo</code></p>
+
+<p>In many languages, classes are abstract, new instances of a class are created using a special <code>new</code> keyword. In Ruby, classes are objects and the class `Class` itself is an object, so that when we need to create new instance of a class, we send a message <code>new</code> to the `Class` object of that class. As consequence <code>new</code> isn't a keyword, it's a static/class method, no different from any other static/class method, the origin code is something like this: </p>
+
+<code class="block">
+def self.new(*args)
+   obj = allocate
+   obj.initialize(*args)
+   obj
+end
+</code>
+
+<p>As we said above about class name constants, when we want to create new instance of a class, we will not send <code>new</code> message directly to the `Class` object like <code>Class:0x1c9f04.new</code>, instead we call <code>Foo.new</code></p>
+<p>When received <code>new</code> message, a new object is created and saved in a C structure called <b>RObject</b>, the RObject structure contains an inner <b>RBasic</b> structure that has a class pointer called <b>klass</b> -&gt; points to its class. And since classes are object so that each of them also has a <b>klass</b> pointer that points to the `Class` object, and in its turn, the `Class` object has also a <b>klass</b> pointer, but it points to itself.</p>
+
+<img src="https://elasticbeanstalk-ap-southeast-1-554663606431.s3-ap-southeast-1.amazonaws.com/ruby_class.jpg">
+
+<p class="branch">How those class objects represent the Inheritance Hierarchy</p>
+
+<p>Since Ruby is considered a pure OOP language, although classes are objects, maybe we thought that there is an inheritance hierarchy between them. Let's take a look below code:</p>
+<code class="block">
+class Dev
+end
+
+class RubyDev &lt; Dev
+end
+
+RubyDev.is_a? Dev # false
+
+</code>
+<p>So <code>RubyDev</code> is-not-a <code>Dev</code>, in other words, there is not an inheritance hierarchy between classes, all of them are at the same level, are instances of the `Class`.</p>
+<p>But they have 3 methods (<code>new</code> , <code>allocate </code>, and <code>superclass</code>) which enable them to be arranged into a inheritance hierarchy.</p>
+<code class="block">
+RubyDev.superclass # Dev
+Dev.superclass # Object
+Object.superclass # BasicObject
+BasicObject.superclass # nil
+
+</code>
+<p>In Ruby, each object contains a reference point to its parent: <code>superclass</code>, so an inheritance hierarchy is a chain of <code>superclass</code> pointers. And since each object has only one <code>superclass</code> pointer so obviously there is not multiple inheritance in Ruby.</p>
+<p>However, classes in Ruby can do multiple inheritance by <b>Mixin</b> modules since `Class` is actually a `Module`:</p>
+<code class="block">
+Class.is_a? Module # true
+Class.ancestors # [Class, Module, Object, Kernel, BasicObject]
+
+module CrazyGuy
+end
+
+class RubyDev &lt; Dev
+    include CrazyGuy
+end
+
+me = RubyDev.new
+me.is_a? Dev # true
+me.is_a? CrazyGuy # true
+
+</code>
+<p>So we can say when developers code classes that is they define the abstract part, and Ruby will work with those class objects (link them together, mixin, ...) to represent that abstract. But the most important thing is that <b>classes are changeable (on fly) and this enable developers re-define the abstract part on fly, too.</b></p>
+
+<p class="branch">Methods lookup &amp; Polymorphism</p>
+<p>The chain of <code>superclass pointers</code> is not only represent the Inheritance hierarchy, but also the path of <b>method lookup</b> process in Ruby.</p>
+<p>An instance of a class doesn't contain methods, it contains only variables, all its methods live in its class and ancestors of that class. When you call a method on that instance, <b>method lookup</b> process will looking for where the method belongs to, first of all, it will search in the class of that instance (kclass pointer) and all modules (if mixin), then if the method not found, the process will go up to the parent class (superclass pointer) and do the same thing, if the method still not found, the process keep go up until it reaches BasicObject.</p>
+<code class="block">
+class Dev
+   def code
+   end
+end
+
+class RubyDev &lt; Dev
+    include CrazyGuy
+end
+
+# the method lookup for `RubyDev.new.code`
+# kclass RubyDev (not found) -&gt; module CrazyGuy (not found) -&gt; superclass Dev (found)
+
+# Note that, when you mixin modules, the order methods lookup actually like this:
+# [prepend modules -&gt; class itself -&gt; include modules -&gt; append modules] -&gt;[parent class]
+
+</code>
+<p>Look at the path that method lookup process go through, if you want to override a method, what will you do? Put (re-define) that method in front of its recently position in the path of method lookup, right?</p>
+<code class="block">
+class Dev
+   def code
+   end
+end
+
+class RubyDev &lt; Dev
+   include CrazyGuy
+
+   #override
+   def code
+   end
+end
+
+class JavaDev &lt; Dev
+   include CrazyGuy
+
+   #override
+   def code
+   end
+end
+
+# the method lookup for `RubyDev.new.code`
+# kclass RubyDev (found) .stop here. -&gt; module CrazyGuy  -&gt; superclass Dev
+
+# the method lookup for `JavaDev.new.code`
+# kclass JavaDev (found) .stop here. -&gt; module CrazyGuy  -&gt; superclass Dev
+
+</code>
+<p>So RubyDev and JavaDev behave different and that is the OOP - Polymorphism we all familiar with, right? In Ruby, we will go further, we can modify classes on fly: </p>
+<code class="block">
+def add_method
+   def Dev.write_blog
+     "bla ... bla ..."
+   end
+
+   def JavaDev.write_blog
+     "bla ... (about java) ..."
+   end
+end
+
+add_method # on fly
+RubyDev.write_blog # "bla ... bla ..."
+JavaDev.write_blog # "bla ... (about java) ..."
+</code>
+<p>Now the methods lookup path will change, too. We have a special polymorphism, the <code>dynamic polymorphism</code> one.</p>
+<p> In Ruby, Python, and many other dynamic programming languages, the ability to dynamically modify a class or module at runtime (affecting only the running instance of the program), is called <b>monkey patch</b>.</p>
+<p>But the <b>monkey patch</b> in Ruby does not stop here, at classes/modules level, it still continue to instances level.</p>
+
+<p class="branch">Eigenclass &amp; Duck Typing</p>
+<p>As noted above, all methods live in classes, all instances of classes only contain variables. So now if we want to do <b>monkey patch</b> with a special instance, something like this:</p>
+<code class="block">
+only_you = RubyDev.new
+not_your_wife = RubyDev.new
+
+def only_you.monkey_patch
+  true
+end
+
+only_you.monkey_patch # true
+not_your_wife.monkey_patch # NoMethodError
+</code>
+<p>How would you do?</p>
+<p>One way and another, we must come back to the methods lookup path and find the way to insert the new method into the path, and somehow it only visible for only that special instance.</p>
+<p>That mean we need insert a class (since methods lookup path is a chain of classes) that is a-copy-of-that-instance's-class, and only-belongs-to-that-special-instance and also the only one contains the new method.</p>
+<p>In Ruby, that kind of class is called <b>Eigenclass</b>. “Eigen” is a German word meaning (roughly) “self,” “own,” “particular to,” or “characteristic of.” Since the Eigenclass can exist only in one instance, because they each are one and unique, they are officially called the <b>Singleton class</b>. (the Eigenclass is also called - less commonly - the <b>Metaclass</b>, but Ruby’s metaclasses are different from those in languages such as Smalltalk).</p>
+<p>Moreover, the problem above is just a specific case of the concept <b>duck typing</b>. In a dynamic language such as Ruby, the “type” of an object is not strictly related to its class. Instead, the “type” is simply the set of methods to which an object can respond. Referring to the saying: “if it walks like a duck and quacks like a duck, then it must be a duck”. </p>
+<p>In order to do that, in Ruby, the Eigenclass solution be applied from the BasicObject. That mean all instances of Object also have an Eigenclasses and of course, all classes (as objects), too. As consequence, everything as objects in Ruby are able to dynamically transform by modifying its methods, for example, if we keep adding `the Lion` methods into a `Mouse` object, <b>duck typing</b> concept will say: that `Mouse` object is actually a `Lion`. We transformed a `Mouse` into a `Lion` (on fly).</p>
+<p>Now the new-method in example above is called <b>singleton method</b> because it is specific to a single object, and we will realize that all `class-methods` of an instance is actually `singleton-methods` of its class.</p>
+<p>Comeback to method lookup, now it will look like this (maybe it still surprises you): </p>
+<img src="https://elasticbeanstalk-ap-southeast-1-554663606431.s3-ap-southeast-1.amazonaws.com/eigen_classes_op.jpg">
+<p>Turn out, the path of method lookup is the chain of Singleton classes, the <code>superclass</code> pointer of a singleton class will point to the parent class's singleton class. Maybe this makes you confuse at first and wonder why <b>duplicating</b> the chains of classes (because an eigenclass is just a copy of origin class, right?). I bet every developer come to dynamic-languages from static-languages (like me) also have the same concern. We all always see the `Class` difference from others. In Ruby, classes are nothing but objects, that mean we can do something like this:</p>
+<code class="block">
+new_ruby_class = Class.new(RubyDev)
+def new_ruby_class.new_way_to_write_blog
+end
+RubyDev.new_way_to_write_blog # NoMethodError
+</code>
+<p>See? a class can born many different duck-type on fly, so it's make sense that the method lookup path must point to the current implementations of super-classes, that mean the chain of singleton-classes. So in order to understand Ruby, the first thing we must keep in mind that everythings are objects, <b>classes are objects</b>.</p>
+<p class="branch">Conclusion</p>
+<p><b>"Classes in Ruby are objects"</b> make Ruby represent OOP principles very flexible and also very dangerous, whenever you modify a class you are potentially opening weird edge cases that you can’t possible foresee. </p>
+<p>But that is Ruby, <b>Ruby’s philosophy is to give absolute freedom to the programmer</b>, suggesting, but almost never enforcing the way of doing things. It’s the developer’s responsibility to wield this power responsibly.</p>
+<p class="branch">References</p>
+<ul>
+   <li>
+   <a href="https://www.amazon.com/Ruby-Under-Microscope-Illustrated-Internals/dp/1593275277">Ruby Under a Microscope: An Illustrated Guide to Ruby Internals</a>
+   </li>
+   <li>
+   <a href="https://ruby-doc.com/docs/ProgrammingRuby/">Programming Ruby</a>
+   </li>
+   <li>
+    <a href="https://pragprog.com/titles/ppmetr2/metaprogramming-ruby-2/">Meta-programming Ruby</a>
+   </li>
+</ul>
+
+
+</div>
+
+<br>
+<p style="float: left;">Thanks!!!</p>
+<p style="float: right;"><i>"... I stay with the questions much longer"</i></p>
+<hr style="clear: both;">
+<br>
+<br>
+<br>
+
+  
+
+</body></html>
