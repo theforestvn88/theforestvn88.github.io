@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html>
+   <head>
+   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+   <title>Theforestvn88Blog</title>
+    <link rel="stylesheet" media="all" href='../../style/forest.css'>
+   </head>
+
+   <body>
+    <h2 class="blog-code-title">@rừng.continuous_learning x <a href="https://theforestvn88.github.io">#The Forest</a></h2>
+    <hr class="blog"><p>&quot;Almost things in Ruby are objects&quot; (except blocks, methods, condition statements).</p>
+
+<h2>How about <code class="prettyprint">Self</code>?</h2>
+
+<p><code class="prettyprint">Self</code> is not object but the &quot;keyword&quot; representing the default object of the current context. </p>
+
+<p>What&#39;s &quot;context&quot;? It&#39;s &quot;scope&quot;:</p>
+
+<ul>
+<li><p>those code which is outside of class/module/method belongs to &quot;main&quot; scope (&quot;global&quot; scope).</p></li>
+<li><p>those code which is inside of class/module and outside of method belongs to &quot;singleton class&quot; scope.</p></li>
+<li><p>those code which is inside of method belongs to &quot;method&quot; scope, which is receiver of the method.</p></li>
+<li><p>those code which is inside of block/lambda/proc belongs to the &quot;closure scope&quot; outside block/lambda/proc </p></li>
+</ul>
+
+<p>But in my opinion, forget those &quot;scopes&quot;, keep in mind just one thing: the &quot;receiver&quot; object.</p>
+
+<ul>
+<li><p>&quot;global scope&quot;? or the <code class="prettyprint">main</code> object is the receiver.</p></li>
+<li><p>&quot;singleton scope&quot;? or an instance of <code class="prettyprint">Class</code> object is the receiver.</p></li>
+<li><p>&quot;method scope&quot;? or an instance of <code class="prettyprint">whatever-class</code> object (that own the method) is the receiver.</p></li>
+<li><p>&quot;closure scope&quot;? or the <code class="prettyprint">closure</code> object outside (close to) block/lambda/proc is the receiver.</p></li>
+</ul>
+
+<p>Let&#39;s dirty hand </p>
+
+<pre><code class="prettyprint lang-ruby">self # main &lt;-- top-level object
+
+class Demo
+  self # Demo &lt;-- &quot;Class object&quot; instantiates this &quot;Demo&quot; object
+
+  def show_me
+    self # an instance of Demo which call this method
+  end
+
+  def self.show_me
+    self # &#39;Demo&#39; object - an instance of &#39;Class&#39; object
+  end
+
+  def name
+    &#39;?&#39;
+  end
+end
+
+Demo.show_me # Demo &lt;-- &#39;Demo&#39; object (an instance of &#39;Class&#39; object)
+</code></pre>
+
+<p>Block/Lambda/Proc</p>
+
+<pre><code class="prettyprint lang-ruby">1.then do |num|
+  self # main &lt;-- which close to this block ? &lt;-- closure object 
+  Demo.new.then do |demo|
+    self # main - closure object still `main`
+    demo.show_me # &lt;Demo:0x00005583d29e47c8&gt; &lt;-- demo is receiver so it&#39;s &#39;self&#39; inside &#39;test&#39; 
+  end
+end
+
+class L
+    def call_lambda(lambda)
+      puts self # &lt;L:0x000055dda1825080&gt;
+      lambda.(self)
+    end
+end
+
+L.new.call_lambda(-&gt; that do
+    puts that # &lt;L:0x000055dda1825080&gt;
+    puts self # main &lt;-- which close to this block ? &lt;-- closure object
+end)
+</code></pre>
+
+<p>Define method dynamically</p>
+
+<pre><code class="prettyprint lang-ruby">class K
+    def foo
+      # who is the receiver of a message &#39;let define bar&#39; here ? 
+      def self.bar # an instance of K that call &#39;foo&#39;
+        puts &#39;bar&#39;
+      end
+    end
+
+    # who is the receiver of a message &#39;let define bar&#39; here ?
+    def self.bar # the K class.
+        puts &#39;BAR&#39;
+    end
+end
+
+k = K.new
+k.foo
+k.bar # bar
+K.bar # BAR
+</code></pre>
+
+<p>class_eval will automatically assign the <code class="prettyprint">class caller</code> as receiver (<code class="prettyprint">self</code>) of it&#39;s following block</p>
+
+<pre><code class="prettyprint lang-ruby">
+Demo.class_eval do
+  def name
+    &#39;?&#39;
+  end
+  self.name # &quot;Demo&quot; &lt;-- class_eval assign Demo as self
+  name # &quot;Demo&quot; &lt;-- class_eval assign Demo as receiver
+end
+</code></pre>
+
+<p>instance_eval will automatically assign the <code class="prettyprint">object caller</code> as receiver (<code class="prettyprint">self</code>) of it&#39;s following block</p>
+
+<pre><code class="prettyprint lang-ruby">class T
+    $o = Object.new
+    $o.instance_eval do
+        def x(a = (def y; puts self; end))
+            p self
+            def z; puts self; end
+        end
+    end
+end
+
+$o.x # &lt;Object:0x00005620af2ff` &lt;-- $o
+$o.y # &lt;Object:0x00005620af2ff  &lt;-- $o
+$o.z # &lt;Object:0x00005620af2ff  &lt;-- $o
+T.new.x # undefined method
+T.new.y # undefined method
+T.new.z # undefined method
+</code></pre>
+
+<p>How about <code class="prettyprint">class &lt;&lt;</code> ?</p>
+
+<pre><code class="prettyprint lang-ruby">class &lt;&lt; String
+  self   # Class:String
+end
+
+class &lt;&lt; &quot;test&quot;
+  self   # Class:String:0x000055a747147348
+end
+
+class &lt;&lt; 1.class
+  self   # Class:Integer
+end
+
+class &lt;&lt; 1 # can&#39;t define singleton (TypeError)
+  self   # cannot reach here
+end
+</code></pre>
+
+<p>As you know, whenever module A extend B, all B&#39;s instance methods become singleton methods of A, then A become the receiver of those methods, that mean <code class="prettyprint">self</code> inside those methods is A.</p>
+
+<p>Module <code class="prettyprint">extend self</code>, as the method name already explain it&#39;s purpose, make the module extend itself.
+So after a module extend itself, all its methods become its singleton methods, and <code class="prettyprint">self</code> is that module class.</p>
+
+<pre><code class="prettyprint lang-ruby">
+module M
+  extend self
+
+  def show_me
+    self # class/module that extend M
+  end
+end
+
+M.show_me # the M itself
+</code></pre>
+
+<h2>Conclusion</h2>
+
+<p>It&#39;s easy to assume that <code class="prettyprint">self</code> === <code class="prettyprint">caller</code>, since we naturally have tendency to link <code class="prettyprint">self</code> to the caller object. For example, You are the caller: <code class="prettyprint">You.do_something</code>,
+then inside <code class="prettyprint">do_something</code>, it&#39;s easy to think that <code class="prettyprint">self</code> is You, right ?</p>
+
+<p>However, when we see <code class="prettyprint">self</code> as the <code class="prettyprint">receiver</code>, then we need to ask &#39;who is the receiver here ?&#39; inside <code class="prettyprint">do_something</code>.</p>
+<hr class="blog" style="clear: both; margin-top: 156px;">
+<h4>“Live as if you were to die tomorrow. Learn as if you were to live forever”</h4>
+</body>
+</html>

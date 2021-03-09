@@ -1,0 +1,44 @@
+MD_FILES = FileList['preview/markdowns/**/*.markdown']
+HTML_FILES = MD_FILES.pathmap("%{^preview/markdowns,publish}d/%n.html")
+
+HTML_FILES.zip(MD_FILES).each do |target, source|
+    file target => [source] do
+        RedcarpetConverter.convert source: source, target: target
+    end
+end
+
+task :convert => HTML_FILES
+
+
+task :home_page do
+    PUBLISH_FILES = FileList['publish/**/*.html']
+    POSTS = PUBLISH_FILES.pathmap("%-1d|%n|%p")
+    group_posts = Hash.new
+    POSTS.each do |post|
+        group, name, path = post.split('|') 
+        group_posts[group] ||= []
+        group_posts[group] << {name: name, path: path}
+    end
+    puts group_posts
+    IndexGenerator.process(group_posts)
+end
+
+task :publish do
+    require 'date'
+    today = Date.today.strftime("%a, %d %b %Y")
+    commit_msg = "update #{today}"
+    puts 'git submit: '
+    sh "git add ."
+    sh "git commit -m '#{commit_msg}'"
+    sh "git push origin master"
+end
+
+task :install_tools do
+    puts "-> install tools ... "
+    sh 'bundle install'
+
+    require 'pathname'
+    FileList['lib/**/*.rb'].each { |x| require "./#{x}" }
+end
+
+task :default => [:install_tools, :convert, :home_page, :publish]

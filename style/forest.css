@@ -1,0 +1,178 @@
+.ruby {
+  color: #c00;
+}
+
+.blog-code-title {
+  display: block;
+  white-space: pre-wrap;
+}
+
+hr.blog {
+  height: 3px;
+  background: black;
+  margin-bottom: 30px;
+}
+
+hr.fence {
+  background: #a5a4a4;
+  margin-bottom: 15px;
+}
+
+h3 {
+  margin: 0px !important;
+}
+
+div.evergreen,
+div.trunk {
+  margin-top: 5px;
+}
+
+.paging {
+  margin-top: 15px !important;
+  margin-bottom: 15px !important;
+}
+
+.paging .prev-page {
+  float: left;
+}
+
+.paging .next-page {
+  float: right;
+}
+
+body {
+  background-color: #fff;
+  color: #333;
+  margin-top: 33px;
+  margin-left: 88px;
+  width: 60% !important;
+}
+
+body,
+p,
+ol,
+ul,
+td,
+button,
+input,
+select,
+textarea {
+  color: #404040;
+  font-family: "Source Sans Pro", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size: 16px;
+  line-height: 1.5;
+}
+
+pre {
+  padding-left: 10px;
+  font-size: 15px;
+  border-width: 0px 0px 0px 3px;
+  border-color: #464545;
+  border-style: solid;
+  background-color: #ece3e3;
+}
+
+a {
+  color: #000;
+  color: rgb(7, 207, 74) !important;
+}
+
+a:visited {
+  color: #666;
+}
+
+a:hover {
+  color: #fff;
+  background-color: #000;
+}
+
+th {
+  padding-bottom: 5px;
+}
+
+td {
+  padding: 0 5px 7px;
+}
+
+div.field,
+div.actions {
+  margin-bottom: 10px;
+}
+
+#notice {
+  color: green;
+}
+
+.field_with_errors {
+  padding: 2px;
+  background-color: red;
+  display: table;
+}
+
+#error_explanation {
+  width: 450px;
+  border: 2px solid red;
+  padding: 7px 7px 0;
+  margin-bottom: 20px;
+  background-color: #f0f0f0;
+}
+
+#error_explanation h2 {
+  text-align: left;
+  font-weight: bold;
+  padding: 5px 5px 5px 15px;
+  font-size: 12px;
+  margin: -7px -7px 0;
+  background-color: #c00;
+  color: #fff;
+}
+
+#error_explanation ul li {
+  font-size: 12px;
+  list-style: square;
+}
+
+label {
+  display: block;
+}
+
+textarea {
+  width: 100% !important;
+  height: 500px !important;
+}
+
+p.branch {
+  border-width: 2px 0px;
+  border-color: black;
+  border-style: solid;
+  display: inline-block;
+}
+
+p.focus {
+  border-radius: 0px;
+  padding: 0.01em 16px;
+  border-width: 0px 0px 0px 6px;
+  border-color: #464545;
+  border-style: solid;
+  background-color: rgba(27, 31, 35, 0.05);
+  display: block;
+}
+
+code {
+  font-family: SFMono-Regular, Consolas, Liberation Mono, Menlo, monospace;
+  font-size: 85%;
+  padding: 0.2em 0.4em;
+  margin: 0;
+  border-radius: 6px;
+  color: rgb(3, 104, 33) !important;
+}
+
+code.block {
+  display: block;
+  white-space: pre-wrap;
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+}
