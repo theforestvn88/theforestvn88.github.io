@@ -26,7 +26,7 @@ But in my opinion, forget those "scopes", keep in mind just one thing: the "rece
 
 Let's dirty hand 
 
-```ruby
+~~~ruby
 self # main <-- top-level object
 
 class Demo
@@ -46,7 +46,7 @@ class Demo
 end
 
 Demo.show_me # Demo <-- 'Demo' object (an instance of 'Class' object)
-```
+~~~
 
 Block/Lambda/Proc
 

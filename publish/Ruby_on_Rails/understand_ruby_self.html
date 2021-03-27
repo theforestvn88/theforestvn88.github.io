@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html>
+   <head>
+   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+   <title>Theforestvn88Blog</title>
+    <link rel="stylesheet" media="all" href='../../style/forest.css'>
+   </head>
+
+   <body>
+    <h2 class="blog-title"><a href="https://theforestvn88.github.io">#The Forest@rừng continuous learning</a></h2><!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html><body>
+<p>"Almost things in Ruby are objects" (except blocks, methods, condition statements).</p>
+
+<h2>How about <code>Self</code>?</h2>
+
+<p><code>Self</code> is not object but the "keyword" representing the default object of the current context. </p>
+
+<p>What's "context"? It's "scope":</p>
+
+<ul>
+<li><p>those code which is outside of class/module/method belongs to "main" scope ("global" scope).</p></li>
+<li><p>those code which is inside of class/module and outside of method belongs to "singleton class" scope.</p></li>
+<li><p>those code which is inside of method belongs to "method" scope, which is receiver of the method.</p></li>
+<li><p>those code which is inside of block/lambda/proc belongs to the "closure scope" outside block/lambda/proc </p></li>
+</ul>
+
+<p>But in my opinion, forget those "scopes", keep in mind just one thing: the "receiver" object.</p>
+
+<ul>
+<li><p>"global scope"? or the <code>main</code> object is the receiver.</p></li>
+<li><p>"singleton scope"? or an instance of <code>Class</code> object is the receiver.</p></li>
+<li><p>"method scope"? or an instance of <code>whatever-class</code> object (that own the method) is the receiver.</p></li>
+<li><p>"closure scope"? or the <code>closure</code> object outside (close to) block/lambda/proc is the receiver.</p></li>
+</ul>
+
+<p>Let's dirty hand </p>
+
+<pre><span></span><span class="nb">self</span> <span class="c1"># main &lt;-- top-level object</span>
+
+<span class="k">class</span> <span class="nc">Demo</span>
+  <span class="nb">self</span> <span class="c1"># Demo &lt;-- "Class object" instantiates this "Demo" object</span>
+
+  <span class="k">def</span> <span class="nf">show_me</span>
+    <span class="nb">self</span> <span class="c1"># an instance of Demo which call this method</span>
+  <span class="k">end</span>
+
+  <span class="k">def</span> <span class="nc">self</span><span class="o">.</span><span class="nf">show_me</span>
+    <span class="nb">self</span> <span class="c1"># 'Demo' object - an instance of 'Class' object</span>
+  <span class="k">end</span>
+
+  <span class="k">def</span> <span class="nf">name</span>
+    <span class="s1">'?'</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+
+<span class="no">Demo</span><span class="o">.</span><span class="n">show_me</span> <span class="c1"># Demo &lt;-- 'Demo' object (an instance of 'Class' object)</span>
+</pre>
+
+<p>Block/Lambda/Proc</p>
+
+<pre><span></span><span class="mi">1</span><span class="o">.</span><span class="n">then</span> <span class="k">do</span> <span class="o">|</span><span class="n">num</span><span class="o">|</span>
+  <span class="nb">self</span> <span class="c1"># main &lt;-- which close to this block ? &lt;-- closure object </span>
+  <span class="no">Demo</span><span class="o">.</span><span class="n">new</span><span class="o">.</span><span class="n">then</span> <span class="k">do</span> <span class="o">|</span><span class="n">demo</span><span class="o">|</span>
+    <span class="nb">self</span> <span class="c1"># main - closure object still `main`</span>
+    <span class="n">demo</span><span class="o">.</span><span class="n">show_me</span> <span class="c1"># &lt;Demo:0x00005583d29e47c8&gt; &lt;-- demo is receiver so it's 'self' inside 'test' </span>
+  <span class="k">end</span>
+<span class="k">end</span>
+
+<span class="k">class</span> <span class="nc">L</span>
+    <span class="k">def</span> <span class="nf">call_lambda</span><span class="p">(</span><span class="nb">lambda</span><span class="p">)</span>
+      <span class="nb">puts</span> <span class="nb">self</span> <span class="c1"># &lt;L:0x000055dda1825080&gt;</span>
+      <span class="nb">lambda</span><span class="o">.</span><span class="p">(</span><span class="nb">self</span><span class="p">)</span>
+    <span class="k">end</span>
+<span class="k">end</span>
+
+<span class="n">L</span><span class="o">.</span><span class="n">new</span><span class="o">.</span><span class="n">call_lambda</span><span class="p">(</span><span class="o">-&gt;</span> <span class="n">that</span> <span class="k">do</span>
+    <span class="nb">puts</span> <span class="n">that</span> <span class="c1"># &lt;L:0x000055dda1825080&gt;</span>
+    <span class="nb">puts</span> <span class="nb">self</span> <span class="c1"># main &lt;-- which close to this block ? &lt;-- closure object</span>
+<span class="k">end</span><span class="p">)</span>
+</pre>
+
+<p>Define method dynamically</p>
+
+<pre><span></span><span class="k">class</span> <span class="nc">K</span>
+    <span class="k">def</span> <span class="nf">foo</span>
+      <span class="c1"># who is the receiver of a message 'let define bar' here ? </span>
+      <span class="k">def</span> <span class="nc">self</span><span class="o">.</span><span class="nf">bar</span> <span class="c1"># an instance of K that call 'foo'</span>
+        <span class="nb">puts</span> <span class="s1">'bar'</span>
+      <span class="k">end</span>
+    <span class="k">end</span>
+
+    <span class="c1"># who is the receiver of a message 'let define bar' here ?</span>
+    <span class="k">def</span> <span class="nc">self</span><span class="o">.</span><span class="nf">bar</span> <span class="c1"># the K class.</span>
+        <span class="nb">puts</span> <span class="s1">'BAR'</span>
+    <span class="k">end</span>
+<span class="k">end</span>
+
+<span class="n">k</span> <span class="o">=</span> <span class="n">K</span><span class="o">.</span><span class="n">new</span>
+<span class="n">k</span><span class="o">.</span><span class="n">foo</span>
+<span class="n">k</span><span class="o">.</span><span class="n">bar</span> <span class="c1"># bar</span>
+<span class="n">K</span><span class="o">.</span><span class="n">bar</span> <span class="c1"># BAR</span>
+</pre>
+
+<p>class_eval will automatically assign the <code>class caller</code> as receiver (<code>self</code>) of it's following block</p>
+
+<pre><span></span><span class="no">Demo</span><span class="o">.</span><span class="n">class_eval</span> <span class="k">do</span>
+  <span class="k">def</span> <span class="nf">name</span>
+    <span class="s1">'?'</span>
+  <span class="k">end</span>
+  <span class="nb">self</span><span class="o">.</span><span class="n">name</span> <span class="c1"># "Demo" &lt;-- class_eval assign Demo as self</span>
+  <span class="nb">name</span> <span class="c1"># "Demo" &lt;-- class_eval assign Demo as receiver</span>
+<span class="k">end</span>
+</pre>
+
+<p>instance_eval will automatically assign the <code>object caller</code> as receiver (<code>self</code>) of it's following block</p>
+
+<pre><span></span><span class="k">class</span> <span class="nc">T</span>
+    <span class="vg">$o</span> <span class="o">=</span> <span class="no">Object</span><span class="o">.</span><span class="n">new</span>
+    <span class="vg">$o</span><span class="o">.</span><span class="n">instance_eval</span> <span class="k">do</span>
+        <span class="k">def</span> <span class="nf">x</span><span class="p">(</span><span class="n">a</span> <span class="o">=</span> <span class="p">(</span><span class="k">def</span> <span class="nf">y</span><span class="p">;</span> <span class="nb">puts</span> <span class="nb">self</span><span class="p">;</span> <span class="k">end</span><span class="p">))</span>
+            <span class="nb">p</span> <span class="nb">self</span>
+            <span class="k">def</span> <span class="nf">z</span><span class="p">;</span> <span class="nb">puts</span> <span class="nb">self</span><span class="p">;</span> <span class="k">end</span>
+        <span class="k">end</span>
+    <span class="k">end</span>
+<span class="k">end</span>
+
+<span class="vg">$o</span><span class="o">.</span><span class="n">x</span> <span class="c1"># &lt;Object:0x00005620af2ff` &lt;-- $o</span>
+<span class="vg">$o</span><span class="o">.</span><span class="n">y</span> <span class="c1"># &lt;Object:0x00005620af2ff  &lt;-- $o</span>
+<span class="vg">$o</span><span class="o">.</span><span class="n">z</span> <span class="c1"># &lt;Object:0x00005620af2ff  &lt;-- $o</span>
+<span class="n">T</span><span class="o">.</span><span class="n">new</span><span class="o">.</span><span class="n">x</span> <span class="c1"># undefined method</span>
+<span class="n">T</span><span class="o">.</span><span class="n">new</span><span class="o">.</span><span class="n">y</span> <span class="c1"># undefined method</span>
+<span class="n">T</span><span class="o">.</span><span class="n">new</span><span class="o">.</span><span class="n">z</span> <span class="c1"># undefined method</span>
+</pre>
+
+<p>How about <code>class &lt;&lt;</code> ?</p>
+
+<pre><span></span><span class="k">class</span> <span class="o">&lt;&lt;</span> <span class="nb">String</span>
+  <span class="nb">self</span>   <span class="c1"># Class:String</span>
+<span class="k">end</span>
+
+<span class="k">class</span> <span class="o">&lt;&lt;</span> <span class="s2">"test"</span>
+  <span class="nb">self</span>   <span class="c1"># Class:String:0x000055a747147348</span>
+<span class="k">end</span>
+
+<span class="k">class</span> <span class="o">&lt;&lt;</span> <span class="mi">1</span><span class="o">.</span><span class="n">class</span>
+  <span class="nb">self</span>   <span class="c1"># Class:Integer</span>
+<span class="k">end</span>
+
+<span class="k">class</span> <span class="o">&lt;&lt;</span> <span class="mi">1</span> <span class="c1"># can't define singleton (TypeError)</span>
+  <span class="nb">self</span>   <span class="c1"># cannot reach here</span>
+<span class="k">end</span>
+</pre>
+
+<p>As you know, whenever module A extend B, all B's instance methods become singleton methods of A, then A become the receiver of those methods, that mean <code>self</code> inside those methods is A.</p>
+
+<p>Module <code>extend self</code>, as the method name already explain it's purpose, make the module extend itself.<br>
+So after a module extend itself, all its methods become its singleton methods, and <code>self</code> is that module class.</p>
+
+<pre><span></span><span class="k">module</span> <span class="nn">M</span>
+  <span class="kp">extend</span> <span class="nb">self</span>
+
+  <span class="k">def</span> <span class="nf">show_me</span>
+    <span class="nb">self</span> <span class="c1"># class/module that extend M</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+
+<span class="n">M</span><span class="o">.</span><span class="n">show_me</span> <span class="c1"># the M itself</span>
+</pre>
+
+<h2>Conclusion</h2>
+
+<p>It's easy to assume that <code>self</code> === <code>caller</code>, since we naturally have tendency to link <code>self</code> to the caller object. For example, You are the caller: <code>You.do_something</code>,<br>
+then inside <code>do_something</code>, it's easy to think that <code>self</code> is You, right ?</p>
+
+<p>However, when we see <code>self</code> as the <code>receiver</code>, then we need to ask 'who is the receiver here ?' inside <code>do_something</code>.</p>
+</body></html>
+<hr class="blog" style="clear: both; margin-top: 156px;">
+<h4>“Live as if you were to die tomorrow. Learn as if you were to live forever”</h4>
+</body>
+</html>
