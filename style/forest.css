@@ -1,8 +1,32 @@
+body {
+  background: #0f0f23;
+  margin-top: 33px;
+  margin-left: 88px;
+  width: 60% !important;
+}
+
+body,
+a,
+p,
+ol,
+ul,
+td,
+button,
+input,
+select,
+textarea {
+  color: #cccccc;
+  font-family: "Source Code Pro", monospace;
+  font-size: 13pt;
+}
+
 .blog-title {
   display: inline-block;
   text-decoration: none;
-  color: #027a02;
+  color: #253b02;
+  font-family: "Source Code Pro", monospace;
   text-shadow: 0 0 2px #00cc00, 0 0 5px #00cc00;
+  font-size: 13pt;
 }
 
 .Ruby_on_Rails {
@@ -47,50 +71,27 @@ div.trunk {
   float: right;
 }
 
-body {
-  background-color: #fff;
-  color: #333;
-  margin-top: 33px;
-  margin-left: 88px;
-  width: 60% !important;
-}
-
-body,
-p,
-ol,
-ul,
-td,
-button,
-input,
-select,
-textarea {
-  color: #404040;
-  font-family: "Source Sans Pro", "Helvetica Neue", Helvetica, Arial, sans-serif;
-  font-size: 16px;
-  line-height: 1.5;
-}
-
 pre {
   padding-left: 10px;
   font-size: 15px;
-  border-width: 0px 0px 0px 3px;
+  border-width: 1px 1px 1px 6px;
   border-color: #464545;
   border-style: solid;
-  background-color: #ece3e3;
+  background-color: #0f0f23;
 }
 
 a {
-  color: #000;
-  color: rgb(1, 44, 15) !important;
+  color: #253b02;
+  text-decoration-line: none !important;
+  font-size: 15pt !important;
 }
 
 a:visited {
-  color: #666;
+  color: rgb(4, 70, 2);
 }
 
 a:hover {
-  color: #fff;
-  background-color: #000;
+  color:rgb(108, 243, 108);
 }
 
 th {
@@ -189,7 +190,7 @@ img {
 .c { color: #408080; font-style: italic } /* Comment */
 .err { border: 1px solid #FF0000 } /* Error */
 .k { color: #008000; font-weight: bold } /* Keyword */
-.o { color: #666666 } /* Operator */
+.o { color: #dad6d6 } /* Operator */
 .cm { color: #408080; font-style: italic } /* Comment.Multiline */
 .cp { color: #BC7A00 } /* Comment.Preproc */
 .c1 { color: #408080; font-style: italic } /* Comment.Single */
@@ -199,7 +200,7 @@ img {
 .gr { color: #FF0000 } /* Generic.Error */
 .gh { color: #000080; font-weight: bold } /* Generic.Heading */
 .gi { color: #00A000 } /* Generic.Inserted */
-.go { color: #808080 } /* Generic.Output */
+.go { color: #201616 } /* Generic.Output */
 .gp { color: #000080; font-weight: bold } /* Generic.Prompt */
 .gs { font-weight: bold } /* Generic.Strong */
 .gu { color: #800080; font-weight: bold } /* Generic.Subheading */
@@ -210,14 +211,14 @@ img {
 .kp { color: #008000 } /* Keyword.Pseudo */
 .kr { color: #008000; font-weight: bold } /* Keyword.Reserved */
 .kt { color: #B00040 } /* Keyword.Type */
-.m { color: #666666 } /* Literal.Number */
+.m { color: #1d1d1d } /* Literal.Number */
 .s { color: #BA2121 } /* Literal.String */
 .na { color: #7D9029 } /* Name.Attribute */
 .nb { color: #008000 } /* Name.Builtin */
 .nc { color: #0000FF; font-weight: bold } /* Name.Class */
 .no { color: #880000 } /* Name.Constant */
 .nd { color: #AA22FF } /* Name.Decorator */
-.ni { color: #999999; font-weight: bold } /* Name.Entity */
+.ni { color: #311919; font-weight: bold } /* Name.Entity */
 .ne { color: #D2413A; font-weight: bold } /* Name.Exception */
 .nf { color: #0000FF } /* Name.Function */
 .nl { color: #A0A000 } /* Name.Label */
@@ -226,10 +227,10 @@ img {
 .nv { color: #19177C } /* Name.Variable */
 .ow { color: #AA22FF; font-weight: bold } /* Operator.Word */
 .w { color: #bbbbbb } /* Text.Whitespace */
-.mf { color: #666666 } /* Literal.Number.Float */
-.mh { color: #666666 } /* Literal.Number.Hex */
-.mi { color: #666666 } /* Literal.Number.Integer */
-.mo { color: #666666 } /* Literal.Number.Oct */
+.mf { color: #d6d2d2 } /* Literal.Number.Float */
+.mh { color: #d6d2d2 } /* Literal.Number.Hex */
+.mi { color: #d6d2d2 } /* Literal.Number.Integer */
+.mo { color: #d6d2d2 } /* Literal.Number.Oct */
 .sb { color: #BA2121 } /* Literal.String.Backtick */
 .sc { color: #BA2121 } /* Literal.String.Char */
 .sd { color: #BA2121; font-style: italic } /* Literal.String.Doc */
@@ -245,4 +246,4 @@ img {
 .vc { color: #19177C } /* Name.Variable.Class */
 .vg { color: #19177C } /* Name.Variable.Global */
 .vi { color: #19177C } /* Name.Variable.Instance */
-.il { color: #666666 } /* Literal.Number.Integer.Long */
+.il { color: #d6d2d2 } /* Literal.Number.Integer.Long */

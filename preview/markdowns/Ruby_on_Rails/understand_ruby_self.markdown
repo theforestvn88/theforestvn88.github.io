@@ -14,7 +14,7 @@ What's "context"? It's "scope":
 
 - those code which is inside of block/lambda/proc belongs to the "closure scope" outside block/lambda/proc 
 
-But in my opinion, forget those "scopes", keep in mind just one thing: the "receiver" object.
+Another point of view: the "receiver" object.
 
 - "global scope"? or the `main` object is the receiver.
 
