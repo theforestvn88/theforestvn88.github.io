@@ -62,7 +62,7 @@ When we invoke a method in ruby we are using `single dispatch`. In `single dispa
 
 ### How those class objects represent the Inheritance Hierarchy
 
-Take a look at [Picture 1] and you will see Ruby classes are lie on a `vertical` line, not on a `horizontal` line as normal `inheritance hierarchy`, in other words, there is not an inheritance hierarchy between classes, all of them are at the same level, are instances of the `Class` and they are chained by pointers `superclass`:
+Take a look at [Picture 1] and you will see Ruby classes are lie on a `horizontal` line, not on a `vertical` line as normal `inheritance hierarchy`, in other words, there is not an inheritance hierarchy between classes, all of them are at the same level, are instances of the `Class` and they are chained by pointers `superclass`:
 
 ~~~ruby
 RubyDev.superclass # Dev 

@@ -81,7 +81,7 @@ pre {
 }
 
 a {
-  color: #253b02;
+  color: #416803;
   text-decoration-line: none !important;
   font-size: 15pt !important;
 }
@@ -166,10 +166,7 @@ p.focus {
   display: block;
 }
 
-/* code {
-  font-family: SFMono-Regular, Consolas, Liberation Mono, Menlo, monospace;
-  font-size: 85%;
-  padding: 0.2em 0.4em;
+code {
   margin: 0;
   border-radius: 6px;
   color: rgb(3, 104, 33) !important;
@@ -178,7 +175,7 @@ p.focus {
 code.block {
   display: block;
   white-space: pre-wrap;
-} */
+}
 
 img {
   max-width: 100%;

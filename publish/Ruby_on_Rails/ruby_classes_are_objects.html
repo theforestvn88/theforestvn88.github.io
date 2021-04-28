@@ -71,7 +71,7 @@ When we invoke a method in ruby we are using <code>single dispatch</code>. In <c
 
 <h3>How those class objects represent the Inheritance Hierarchy</h3>
 
-<p>Take a look at [Picture 1] and you will see Ruby classes are lie on a <code>vertical</code> line, not on a <code>horizontal</code> line as normal <code>inheritance hierarchy</code>, in other words, there is not an inheritance hierarchy between classes, all of them are at the same level, are instances of the <code>Class</code> and they are chained by pointers <code>superclass</code>:</p>
+<p>Take a look at [Picture 1] and you will see Ruby classes are lie on a <code>horizontal</code> line, not on a <code>vertical</code> line as normal <code>inheritance hierarchy</code>, in other words, there is not an inheritance hierarchy between classes, all of them are at the same level, are instances of the <code>Class</code> and they are chained by pointers <code>superclass</code>:</p>
 
 <pre><span></span><span class="no">RubyDev</span><span class="o">.</span><span class="n">superclass</span> <span class="c1"># Dev </span>
 <span class="no">Dev</span><span class="o">.</span><span class="n">superclass</span> <span class="c1"># Object </span>

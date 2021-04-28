@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+   <head>
+   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+   <title>Theforestvn88Blog</title>
+    <link rel="stylesheet" media="all" href='../../style/forest.css'>
+   </head>
+
+   <body>
+    <h2 class="blog-title"><a href="https://theforestvn88.github.io">#The Forest@rừng continuous learning</a></h2><!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html><body>
+<h2>Ruby Super Key-word</h2>
+
+<p>Let take a look at the follow code and guess what'll be printed</p>
+
+<pre><span></span><span class="k">class</span> <span class="nc">A</span>
+  <span class="k">def</span> <span class="nf">hi</span><span class="p">()</span> <span class="nb">puts</span><span class="p">(</span><span class="s1">'A'</span><span class="p">)</span> <span class="k">end</span>
+<span class="k">end</span>
+
+<span class="k">module</span> <span class="nn">M</span>
+  <span class="k">def</span> <span class="nf">hi</span><span class="p">()</span> <span class="nb">puts</span><span class="p">(</span><span class="s1">'M'</span><span class="p">)</span> <span class="k">end</span>
+<span class="k">end</span>
+
+<span class="k">class</span> <span class="nc">B</span> <span class="o">&lt;</span> <span class="n">A</span>
+  <span class="kp">include</span> <span class="n">M</span>
+
+  <span class="k">def</span> <span class="nf">hi</span><span class="p">()</span> <span class="k">super</span> <span class="k">end</span>
+<span class="k">end</span>
+
+<span class="nb">puts</span> <span class="n">B</span><span class="o">.</span><span class="n">new</span><span class="o">.</span><span class="n">hi</span> <span class="c1"># ?</span>
+</pre>
+
+<p>If you are OOP developers then maybe you think that <code>super</code> in B will point to A as B is inherited A, right ? </p>
+
+<p>But Ruby inheritance hierarchy does not the same as other languages, it's <a href="https://theforestvn88.github.io/publish/Ruby_on_Rails/ruby_classes_are_objects.html">the chain of <code>Class</code> instances</a> that are arranged to represent the inheritance hierarchy. And Ruby use that chain as path of the <strong>method lookup</strong> process.</p>
+
+<p>The keyword <code>super</code> here is a pointer point to the next <code>class</code> on the <strong>method lookup</strong> chain, it does not know about the term <code>parent</code> at all, and note that when we <code>include</code> a module, that module will be the next class on the chain.</p>
+
+<p>In the above code, the chain look like this:<br>
+<code>B -&gt; M -&gt; A</code></p>
+
+<p>So <code>B.new.hi</code> will print <code>M</code> since <code>super</code> point to <code>M</code> not <code>A</code>.</p>
+
+<p>Now if you change the method <code>hi</code> in module B to call <code>super</code> like this:</p>
+
+<pre><span></span><span class="k">module</span> <span class="nn">M</span>
+  <span class="k">def</span> <span class="nf">hi</span><span class="p">()</span> <span class="k">super</span> <span class="k">end</span>
+<span class="k">end</span>
+</pre>
+
+<p>Then <code>B.new.hi</code> will print <code>A</code>.</p>
+
+<p>The chain of classes inheritance hierarchy is the <code>method-lookup</code> in Ruby</p>
+
+<p>Now let module M include another module N</p>
+
+<pre><span></span><span class="k">module</span> <span class="nn">N</span>
+  <span class="k">def</span> <span class="nf">hi</span><span class="p">()</span> <span class="nb">puts</span><span class="p">(</span><span class="s1">'N'</span><span class="p">)</span> <span class="k">end</span>
+<span class="k">end</span>
+
+<span class="k">module</span> <span class="nn">M</span>
+  <span class="kp">include</span> <span class="n">N</span>
+  <span class="k">def</span> <span class="nf">hi</span><span class="p">()</span> <span class="k">super</span> <span class="k">end</span>
+<span class="k">end</span>
+</pre>
+
+<p>Then what'll be printed ? <code>N</code>. Because the chain now is <code>B &lt; M &lt; N &lt; A</code>.</p>
+
+<p>Updating ....</p>
+</body></html>
+<hr class="blog" style="clear: both; margin-top: 156px;">
+<p class="blog-title">“Live as if you were to die tomorrow. Learn as if you were to live forever”</p>
+</body>
+</html>
