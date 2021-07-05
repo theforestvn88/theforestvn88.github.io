@@ -15,7 +15,7 @@
 
 <p><code>Self</code> is not object but the "keyword" representing the default object of the current context. </p>
 
-<p>What's "context"? It's "scope":</p>
+<h3>What's "context"? It's "scope":</h3>
 
 <ul>
 <li><p>those code which is outside of class/module/method belongs to "main" scope ("global" scope).</p></li>
@@ -24,7 +24,7 @@
 <li><p>those code which is inside of block/lambda/proc belongs to the "closure scope" outside block/lambda/proc </p></li>
 </ul>
 
-<p>Another point of view: the "receiver" object.</p>
+<h3>Another point of view: the "receiver" object.</h3>
 
 <ul>
 <li><p>"global scope"? or the <code>main</code> object is the receiver.</p></li>
@@ -33,7 +33,7 @@
 <li><p>"closure scope"? or the <code>closure</code> object outside (close to) block/lambda/proc is the receiver.</p></li>
 </ul>
 
-<p>Let's dirty hand </p>
+<h3>Let's dirty hand</h3>
 
 <pre><span></span><span class="nb">self</span> <span class="c1"># main &lt;-- top-level object</span>
 
@@ -166,13 +166,6 @@ So after a module extend itself, all its methods become its singleton methods, a
 
 <span class="n">M</span><span class="o">.</span><span class="n">show_me</span> <span class="c1"># the M itself</span>
 </pre>
-
-<h2>Conclusion</h2>
-
-<p>It's easy to assume that <code>self</code> === <code>caller</code>, since we naturally have tendency to link <code>self</code> to the caller object. For example, You are the caller: <code>You.do_something</code>,<br>
-then inside <code>do_something</code>, it's easy to think that <code>self</code> is You, right ?</p>
-
-<p>However, when we see <code>self</code> as the <code>receiver</code>, then we need to ask 'who is the receiver here ?' inside <code>do_something</code>.</p>
 </body></html>
 <hr class="blog" style="clear: both; margin-top: 156px;">
 <p class="blog-title">“Live as if you were to die tomorrow. Learn as if you were to live forever”</p>

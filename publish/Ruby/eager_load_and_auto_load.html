@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html>
+   <head>
+   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+   <title>Theforestvn88Blog</title>
+    <link rel="stylesheet" media="all" href='../../style/forest.css'>
+   </head>
+
+   <body>
+    <h2 class="blog-title"><a href="https://theforestvn88.github.io">#The Forest@rừng continuous learning</a></h2><!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html><body>
+<p>As you probably already know, with each <code>class</code> is defined, there's a <code>constant</code> corresponding to it, named <code>class name constant</code>, you will use this constant to reference to that class, for instance:</p>
+
+<pre><span></span><span class="c1"># file a.rb</span>
+<span class="k">class</span> <span class="nc">A</span>
+<span class="k">end</span>
+
+<span class="n">A</span><span class="o">.</span><span class="n">new</span> <span class="c1"># constant A reference to class A</span>
+</pre>
+
+<p>However, in other files, the constant A will not be defined until the file in which the class A be defined, be loaded.</p>
+
+<pre><span></span><span class="c1"># file b.rb</span>
+<span class="n">A</span><span class="o">.</span><span class="n">new</span> <span class="c1"># error: uninitialized constant A (NameError)</span>
+
+<span class="c1"># file c.rb</span>
+<span class="n">require_relative</span> <span class="s2">"./a.rb"</span>
+<span class="n">A</span><span class="o">.</span><span class="n">new</span> <span class="c1"># OK</span>
+</pre>
+
+<p>As you can see, if you want to use a class, you have to load it. It's not comfortable in a large/complex project source code where you maybe have to require a ton of classes.</p>
+
+<p>So, there're 2 approaches to solve this problem: <code>eager load</code> and <code>auto load</code></p>
+
+<h2>Eager Load</h2>
+
+<p>This term means all needed files will be loaded before hand, once for all.</p>
+
+<p>Suppose i have an app with structure as below</p>
+
+<pre><span></span><span class="n">app</span><span class="o">/</span>
+<span class="o">|</span><span class="n">__controllers</span><span class="o">/</span>
+   <span class="o">|</span><span class="n">__topics_controller</span><span class="o">.</span><span class="n">rb</span>
+<span class="o">|</span><span class="n">__models</span><span class="o">/</span>
+   <span class="o">|</span><span class="n">__topic</span><span class="o">.</span><span class="n">rb</span>
+<span class="n">app</span><span class="o">.</span><span class="n">rb</span>
+<span class="n">loader</span><span class="o">.</span><span class="n">rb</span>
+</pre>
+
+<p>Now in <code>app.rb</code>, i want to start <code>topics_controller</code> which will load/modify <code>topic</code> models, then i can load recurisive all <code>.rb</code> files in the <code>/app</code> folder:</p>
+
+<pre><span></span><span class="c1"># topic.rb</span>
+<span class="k">class</span> <span class="nc">Topic</span>
+  <span class="nb">puts</span> <span class="s2">"load topic model"</span>
+<span class="k">end</span>
+
+<span class="c1"># loader.rb</span>
+<span class="k">module</span> <span class="nn">Loader</span>
+  <span class="k">def</span> <span class="nf">eager_load</span><span class="p">(</span><span class="n">dir_path</span><span class="p">)</span>
+    <span class="n">walk_through</span><span class="p">(</span><span class="n">dir_path</span><span class="p">)</span> <span class="k">do</span> <span class="o">|</span><span class="nb">name</span><span class="p">,</span> <span class="n">path</span><span class="o">|</span>
+      <span class="nb">require</span> <span class="n">path</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+
+  <span class="kp">private</span>
+
+  <span class="k">def</span> <span class="nf">walk_through</span><span class="p">(</span><span class="n">dir_path</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">block</span><span class="p">)</span>
+    <span class="no">Dir</span><span class="o">.</span><span class="n">foreach</span><span class="p">(</span><span class="n">dir_path</span><span class="p">)</span> <span class="k">do</span> <span class="o">|</span><span class="n">dof</span><span class="o">|</span>
+      <span class="n">dof_path</span> <span class="o">=</span> <span class="no">File</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">dir_path</span><span class="p">,</span> <span class="n">dof</span><span class="p">)</span>
+      <span class="k">if</span> <span class="n">dof_path</span><span class="o">.</span><span class="n">end_with?</span><span class="p">(</span><span class="s2">".rb"</span><span class="p">)</span>
+        <span class="n">block</span><span class="o">.</span><span class="n">call</span><span class="p">(</span><span class="n">dof</span><span class="p">,</span> <span class="n">dof_path</span><span class="p">)</span>
+      <span class="k">elsif</span> <span class="no">File</span><span class="o">.</span><span class="n">directory?</span><span class="p">(</span><span class="n">dof_path</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="n">dof</span><span class="o">.</span><span class="n">start_with?</span><span class="p">(</span><span class="s2">"."</span><span class="p">)</span>
+        <span class="n">walk_through</span><span class="p">(</span><span class="n">dof_path</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">block</span><span class="p">)</span>
+      <span class="k">end</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+
+<span class="c1"># app.rb</span>
+<span class="n">require_relative</span> <span class="s2">"loader"</span>
+<span class="k">class</span> <span class="nc">Application</span>
+  <span class="kp">extend</span> <span class="no">Loader</span>
+  <span class="n">eager_load</span><span class="p">(</span><span class="no">File</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">__dir__</span><span class="p">,</span><span class="s1">'..'</span><span class="p">,</span><span class="s1">'app'</span><span class="p">))</span>
+<span class="k">end</span>
+
+<span class="c1"># load topic model</span>
+</pre>
+
+<p>As you can see, the class <code>Topic</code> is loaded (the text <code>load topic model</code> is show on console) although there're any code use it.</p>
+
+<p>Note: <code>Kernel#require</code> which will load files only once, it will search your ruby <code>$LOAD_PATH</code> to find the required file if the params is not an absolute path, on the other hand, <code>require_relative</code> allow you to load file with relative path.</p>
+
+<h2>Auto Load</h2>
+
+<p><code>Eager load</code> maybe take a long time when starting the application since it load all needed files at once, the bigger the project the longer time it'll take to eager load.</p>
+
+<p>Here <code>Auto Load</code> come to rescue, <code>Kernel#autoload</code> is kind of lazy method, it will not load the file until that file be accessed at the first time.</p>
+
+<p>i will add <code>auto_load</code> method and expect that with <code>auto_load</code>, the <code>topic</code> model will be lazy loaded</p>
+
+<pre><span></span><span class="k">module</span> <span class="nn">Loader</span>
+  <span class="c1"># ...</span>
+
+  <span class="k">def</span> <span class="nf">auto_load</span><span class="p">(</span><span class="n">dir_path</span><span class="p">)</span>
+    <span class="n">walk_through</span><span class="p">(</span><span class="n">dir_path</span><span class="p">)</span> <span class="k">do</span> <span class="o">|</span><span class="n">basename</span><span class="p">,</span> <span class="n">path</span><span class="o">|</span>
+      <span class="n">clazz</span> <span class="o">=</span> <span class="n">basename</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">"."</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="o">.</span><span class="n">capitalize</span>
+      <span class="nb">autoload</span> <span class="n">clazz</span><span class="p">,</span> <span class="n">path</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+
+  <span class="c1"># ...</span>
+<span class="k">end</span>
+
+<span class="c1"># app.rb</span>
+<span class="n">require_relative</span> <span class="s2">"loader"</span>
+<span class="k">class</span> <span class="nc">Application</span>
+  <span class="kp">extend</span> <span class="no">Loader</span>
+  <span class="n">auto_load</span><span class="p">(</span><span class="no">File</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">__dir__</span><span class="p">,</span><span class="s1">'app'</span><span class="p">))</span>
+
+  <span class="k">def</span> <span class="nf">start</span>
+    <span class="no">Topic</span><span class="o">.</span><span class="n">new</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+
+<span class="n">app</span> <span class="o">=</span> <span class="no">Application</span><span class="o">.</span><span class="n">new</span> <span class="c1"># no thing</span>
+<span class="n">app</span><span class="o">.</span><span class="n">start</span> <span class="c1"># load topic model</span>
+</pre>
+
+<p>Ok, <code>Topic</code> is lazy loaded, but here's still one more interesting, the constant <code>Topic</code>.</p>
+
+<p>Let check something</p>
+
+<pre><span></span><span class="c1"># app.rb</span>
+<span class="n">require_relative</span> <span class="s2">"loader"</span>
+<span class="k">class</span> <span class="nc">Application</span>
+  <span class="kp">extend</span> <span class="no">Loader</span>
+  <span class="n">auto_load</span><span class="p">(</span><span class="no">File</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">__dir__</span><span class="p">,</span><span class="s1">'..'</span><span class="p">,</span><span class="s1">'app'</span><span class="p">))</span>
+
+  <span class="k">def</span> <span class="nf">start</span>
+    <span class="no">Topic</span><span class="o">.</span><span class="n">new</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+
+<span class="no">Topic</span><span class="o">.</span><span class="n">new</span> <span class="c1"># error: uninitialized constant Topic (NameError)</span>
+</pre>
+
+<p>Oh !!! turn out the way the constant <code>Topic</code> be lazy loaded, is not what i thought, the first time <code>Topic</code> is accessed.</p>
+
+<p>Let try something else</p>
+
+<pre><span></span><span class="c1"># app.rb</span>
+<span class="c1"># ...</span>
+
+<span class="no">Application</span><span class="o">::</span><span class="no">Topic</span><span class="o">.</span><span class="n">new</span> <span class="c1"># uninitialized constant Application::Topic (NameError)</span>
+<span class="c1"># load topic model</span>
+</pre>
+
+<p>What ??? the text <code>load topic model</code> appear on console, that mean the constant <code>Topic</code> is actually be loaded when there's code reference to <code>Application::Topic</code>, not <code>Topic</code>, in other words: the constant <code>Topic</code> under the loader class <code>Application</code>. And the error above mean the constant <code>Application::Topic</code> is private constant that <code>autoload</code> register it as something like a path which will trigger loading the class <code>Topic</code> (using <code>Kernel::require</code>).</p>
+
+<p>Let verify that</p>
+
+<pre><span></span><span class="c1"># app.rb</span>
+<span class="c1"># ...</span>
+
+<span class="k">begin</span>
+  <span class="no">Application</span><span class="o">::</span><span class="no">Topic</span><span class="o">.</span><span class="n">new</span> <span class="c1"># error</span>
+  <span class="c1"># load topic model</span>
+<span class="k">ensure</span>
+  <span class="no">Topic</span><span class="o">.</span><span class="n">new</span> <span class="c1"># OK now</span>
+  <span class="no">Application</span><span class="o">::</span><span class="no">Topic</span><span class="o">.</span><span class="n">new</span> <span class="c1"># still error</span>
+<span class="k">end</span>
+</pre>
+
+<p>Yes, that right !</p>
+</body></html>
+<hr class="blog" style="clear: both; margin-top: 156px;">
+<a class="blog-title" href="https://theforestvn88.github.io">“Live as if you were to die tomorrow. Learn as if you were to live forever”</a>
+</body>
+</html>

@@ -57,5 +57,3 @@ end
 ~~~
 
 Then what'll be printed ? `N`. Because the chain now is `B < M < N < A`.
-
-Updating ....

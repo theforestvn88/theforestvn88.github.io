@@ -4,7 +4,7 @@
 
 `Self` is not object but the "keyword" representing the default object of the current context. 
 
-What's "context"? It's "scope":
+### What's "context"? It's "scope":
 
 - those code which is outside of class/module/method belongs to "main" scope ("global" scope).
 
@@ -14,7 +14,7 @@ What's "context"? It's "scope":
 
 - those code which is inside of block/lambda/proc belongs to the "closure scope" outside block/lambda/proc 
 
-Another point of view: the "receiver" object.
+### Another point of view: the "receiver" object.
 
 - "global scope"? or the `main` object is the receiver.
 
@@ -24,7 +24,7 @@ Another point of view: the "receiver" object.
 
 - "closure scope"? or the `closure` object outside (close to) block/lambda/proc is the receiver.
 
-Let's dirty hand 
+### Let's dirty hand 
 
 ~~~ruby
 self # main <-- top-level object
@@ -167,9 +167,3 @@ end
 M.show_me # the M itself
 ```
 
-## Conclusion
-
-It's easy to assume that `self` === `caller`, since we naturally have tendency to link `self` to the caller object. For example, You are the caller: `You.do_something`,
-then inside `do_something`, it's easy to think that `self` is You, right ?
-
-However, when we see `self` as the `receiver`, then we need to ask 'who is the receiver here ?' inside `do_something`.

@@ -13,7 +13,7 @@ class IndexGenerator
 
         posts.each do |post|
           index_html += "<li>"
-          index_html += "<a href=#{post[:path]}>[<span class='#{group}'>#{group.gsub('_', ' ')}</span>]#{post[:name].gsub('_', ' ')}</a>"
+          index_html += "<a href=#{post[:path]}><span class='#{group}'>#{group.gsub('_', ' ')}/</span>#{post[:name].gsub('_', ' ')}</a>"
           index_html += "</li>"
           index_html += "\n"
         end

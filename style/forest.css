@@ -23,13 +23,17 @@ textarea {
 .blog-title {
   display: inline-block;
   text-decoration: none;
-  color: #253b02;
+  color: #395c02;
   font-family: "Source Code Pro", monospace;
   text-shadow: 0 0 2px #00cc00, 0 0 5px #00cc00;
   font-size: 13pt;
 }
 
-.Ruby_on_Rails {
+.Ruby {
+  color: #c00;
+}
+
+.RoR {
   color: #c00;
 }
 
